@@ -250,7 +250,7 @@ document.addEventListener('DOMContentLoaded', function() {
     function sendMessage(message) {
         const typingIndicator = showTyping();
         
-        fetch('/chatbot', {
+        fetch('/api/chat', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

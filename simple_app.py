@@ -149,7 +149,7 @@ def hormone_catalog():
 
 @app.route('/chatbot')
 def chatbot():
-    return render_template('chatbot.html')
+    return render_template('chatbot_simple.html')
 
 @app.route('/api/chat', methods=['POST'])
 def chat():
