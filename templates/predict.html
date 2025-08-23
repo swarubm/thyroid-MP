@@ -1,0 +1,285 @@
+{% extends "base.html" %}
+
+{% block title %}Thyroid Prediction - Thyroid Health Assistant{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-8">
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-white">
+                <h4 class="mb-0">
+                    <i class="fas fa-chart-line me-2"></i>Thyroid Health Prediction
+                </h4>
+                <p class="text-muted mb-0">Enter your thyroid hormone levels and symptoms for AI-powered analysis</p>
+            </div>
+            <div class="card-body">
+                <form method="POST" id="predictionForm">
+                    <!-- Basic Information -->
+                    <div class="row mb-4">
+                        <div class="col-12">
+                            <h5 class="border-bottom pb-2 mb-3">Basic Information</h5>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="age" class="form-label">Age *</label>
+                            <input type="number" class="form-control" id="age" name="age" required min="1" max="120">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="sex" class="form-label">Sex *</label>
+                            <select class="form-select" id="sex" name="sex" required>
+                                <option value="">Select sex</option>
+                                <option value="M">Male</option>
+                                <option value="F">Female</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Hormone Levels -->
+                    <div class="row mb-4">
+                        <div class="col-12">
+                            <h5 class="border-bottom pb-2 mb-3">Hormone Levels</h5>
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            <label for="tsh" class="form-label">
+                                TSH (Thyroid Stimulating Hormone) *
+                                <i class="fas fa-info-circle text-primary ms-1" data-bs-toggle="tooltip" title="Normal range: 0.4 - 4.0 mIU/L"></i>
+                            </label>
+                            <input type="number" class="form-control" id="tsh" name="tsh" step="0.01" required>
+                            <div class="form-text">Normal range: 0.4 - 4.0 mIU/L</div>
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            <label for="t3" class="form-label">
+                                T3 (Triiodothyronine) *
+                                <i class="fas fa-info-circle text-primary ms-1" data-bs-toggle="tooltip" title="Normal range: 80 - 200 ng/dL"></i>
+                            </label>
+                            <input type="number" class="form-control" id="t3" name="t3" step="0.1" required>
+                            <div class="form-text">Normal range: 80 - 200 ng/dL</div>
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            <label for="tt4" class="form-label">
+                                TT4 (Total Thyroxine) *
+                                <i class="fas fa-info-circle text-primary ms-1" data-bs-toggle="tooltip" title="Normal range: 4.5 - 11.2 μg/dL"></i>
+                            </label>
+                            <input type="number" class="form-control" id="tt4" name="tt4" step="0.1" required>
+                            <div class="form-text">Normal range: 4.5 - 11.2 μg/dL</div>
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            <label for="t4u" class="form-label">
+                                T4U (T4 Uptake) *
+                                <i class="fas fa-info-circle text-primary ms-1" data-bs-toggle="tooltip" title="Normal range: 0.8 - 1.3"></i>
+                            </label>
+                            <input type="number" class="form-control" id="t4u" name="t4u" step="0.01" required>
+                            <div class="form-text">Normal range: 0.8 - 1.3</div>
+                        </div>
+                    </div>
+
+                    <!-- Medical History -->
+                    <div class="row mb-4">
+                        <div class="col-12">
+                            <h5 class="border-bottom pb-2 mb-3">Medical History & Symptoms</h5>
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="on_thyroxine" name="on_thyroxine">
+                                <label class="form-check-label" for="on_thyroxine">
+                                    Currently on Thyroxine medication
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="query_on_thyroxine" name="query_on_thyroxine">
+                                <label class="form-check-label" for="query_on_thyroxine">
+                                    Query on Thyroxine
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="on_antithyroid_medication" name="on_antithyroid_medication">
+                                <label class="form-check-label" for="on_antithyroid_medication">
+                                    On Antithyroid medication
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="sick" name="sick">
+                                <label class="form-check-label" for="sick">
+                                    Currently sick
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="pregnant" name="pregnant">
+                                <label class="form-check-label" for="pregnant">
+                                    Pregnant
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="thyroid_surgery" name="thyroid_surgery">
+                                <label class="form-check-label" for="thyroid_surgery">
+                                    Previous thyroid surgery
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="i131_treatment" name="i131_treatment">
+                                <label class="form-check-label" for="i131_treatment">
+                                    I131 treatment history
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="query_hypothyroid" name="query_hypothyroid">
+                                <label class="form-check-label" for="query_hypothyroid">
+                                    Query hypothyroid
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="query_hyperthyroid" name="query_hyperthyroid">
+                                <label class="form-check-label" for="query_hyperthyroid">
+                                    Query hyperthyroid
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="lithium" name="lithium">
+                                <label class="form-check-label" for="lithium">
+                                    Taking Lithium
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="goitre" name="goitre">
+                                <label class="form-check-label" for="goitre">
+                                    Goitre present
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="tumor" name="tumor">
+                                <label class="form-check-label" for="tumor">
+                                    Thyroid tumor
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="hypopituitary" name="hypopituitary">
+                                <label class="form-check-label" for="hypopituitary">
+                                    Hypopituitary
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="psych" name="psych">
+                                <label class="form-check-label" for="psych">
+                                    Psychiatric disorder
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-primary btn-lg">
+                            <i class="fas fa-brain me-2"></i>Analyze with AI
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Hormone Catalog Sidebar -->
+    <div class="col-lg-4">
+        <div class="card border-0 shadow-sm sticky-top" style="top: 2rem;">
+            <div class="card-header bg-white">
+                <h5 class="mb-0">
+                    <i class="fas fa-flask me-2"></i>Hormone Guide
+                </h5>
+            </div>
+            <div class="card-body">
+                {% for hormone, info in hormone_catalog.items() %}
+                <div class="mb-4">
+                    <h6 class="text-primary">{{ hormone }}</h6>
+                    <p class="small mb-1"><strong>{{ info.name }}</strong></p>
+                    <p class="small text-muted mb-1">{{ info.description }}</p>
+                    <p class="small mb-1"><strong>Normal Range:</strong> {{ info.normal_range }}</p>
+                    <div class="small">
+                        <span class="text-success">High: {{ info.high_meaning }}</span><br>
+                        <span class="text-danger">Low: {{ info.low_meaning }}</span>
+                    </div>
+                </div>
+                {% if not loop.last %}<hr>{% endif %}
+                {% endfor %}
+                
+                <div class="mt-4">
+                    <a href="{{ url_for('hormone_catalog') }}" class="btn btn-outline-primary btn-sm w-100">
+                        <i class="fas fa-book me-2"></i>Full Hormone Catalog
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Initialize tooltips
+var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+    return new bootstrap.Tooltip(tooltipTriggerEl)
+});
+
+// Form validation
+document.getElementById('predictionForm').addEventListener('submit', function(e) {
+    const age = document.getElementById('age').value;
+    const tsh = document.getElementById('tsh').value;
+    const t3 = document.getElementById('t3').value;
+    const tt4 = document.getElementById('tt4').value;
+    const t4u = document.getElementById('t4u').value;
+    
+    if (age < 1 || age > 120) {
+        alert('Please enter a valid age between 1 and 120');
+        e.preventDefault();
+        return;
+    }
+    
+    if (tsh <= 0 || t3 <= 0 || tt4 <= 0 || t4u <= 0) {
+        alert('Hormone levels must be positive numbers');
+        e.preventDefault();
+        return;
+    }
+});
+</script>
+{% endblock %}

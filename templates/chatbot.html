@@ -1,0 +1,281 @@
+{% extends "base.html" %}
+
+{% block title %}AI Health Assistant - Thyroid Health Assistant{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-8">
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-white">
+                <h4 class="mb-0">
+                    <i class="fas fa-robot me-2"></i>AI Health Assistant
+                </h4>
+                <p class="text-muted mb-0">Ask me anything about thyroid health, symptoms, treatments, or general health questions</p>
+            </div>
+            <div class="card-body p-0">
+                <!-- Chat Messages -->
+                <div id="chat-messages" class="chat-container p-3" style="height: 400px; overflow-y: auto;">
+                    <div class="chat-message bot-message mb-3">
+                        <div class="d-flex">
+                            <div class="chat-avatar me-3">
+                                <i class="fas fa-robot fa-2x text-primary"></i>
+                            </div>
+                            <div class="chat-bubble bg-light p-3 rounded">
+                                <p class="mb-0">Hello! I'm your thyroid health assistant. I can help you with:</p>
+                                <ul class="mb-0 mt-2">
+                                    <li>Understanding thyroid symptoms and conditions</li>
+                                    <li>Explaining lab results and hormone levels</li>
+                                    <li>Providing diet and lifestyle recommendations</li>
+                                    <li>Helping you find healthcare providers</li>
+                                    <li>Answering general health questions</li>
+                                </ul>
+                                <p class="mb-0 mt-2">How can I help you today?</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Chat Input -->
+                <div class="chat-input p-3 border-top">
+                    <form id="chat-form" class="d-flex">
+                        <input type="text" id="message-input" class="form-control me-2" placeholder="Type your message here..." autocomplete="off">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-paper-plane"></i>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Quick Questions Sidebar -->
+    <div class="col-lg-4">
+        <div class="card border-0 shadow-sm mb-4">
+            <div class="card-header bg-white">
+                <h5 class="mb-0">
+                    <i class="fas fa-lightbulb me-2"></i>Quick Questions
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="d-grid gap-2">
+                    <button class="btn btn-outline-primary btn-sm quick-question" data-question="What are the symptoms of hypothyroidism?">
+                        <i class="fas fa-question-circle me-2"></i>Hypothyroidism Symptoms
+                    </button>
+                    <button class="btn btn-outline-primary btn-sm quick-question" data-question="What are the symptoms of hyperthyroidism?">
+                        <i class="fas fa-question-circle me-2"></i>Hyperthyroidism Symptoms
+                    </button>
+                    <button class="btn btn-outline-primary btn-sm quick-question" data-question="What foods should I avoid with thyroid problems?">
+                        <i class="fas fa-question-circle me-2"></i>Foods to Avoid
+                    </button>
+                    <button class="btn btn-outline-primary btn-sm quick-question" data-question="How often should I get my thyroid checked?">
+                        <i class="fas fa-question-circle me-2"></i>Testing Frequency
+                    </button>
+                    <button class="btn btn-outline-primary btn-sm quick-question" data-question="What is the normal TSH range?">
+                        <i class="fas fa-question-circle me-2"></i>Normal TSH Range
+                    </button>
+                    <button class="btn btn-outline-primary btn-sm quick-question" data-question="Can stress affect thyroid function?">
+                        <i class="fas fa-question-circle me-2"></i>Stress & Thyroid
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Chat Tips -->
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-white">
+                <h5 class="mb-0">
+                    <i class="fas fa-info-circle me-2"></i>Chat Tips
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="small">
+                    <p><strong>Try asking:</strong></p>
+                    <ul class="mb-0">
+                        <li>"What does my TSH level mean?"</li>
+                        <li>"How can I improve my thyroid health?"</li>
+                        <li>"What tests do I need for thyroid?"</li>
+                        <li>"Can you explain my lab results?"</li>
+                        <li>"What diet is best for hypothyroidism?"</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+.chat-container {
+    background-color: #f8f9fa;
+}
+
+.chat-message {
+    animation: fadeIn 0.3s ease-in;
+}
+
+.bot-message .chat-bubble {
+    background-color: #e3f2fd;
+    border-left: 4px solid #2196f3;
+}
+
+.user-message .chat-bubble {
+    background-color: #e8f5e8;
+    border-left: 4px solid #4caf50;
+}
+
+.chat-avatar {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background-color: #f8f9fa;
+}
+
+.user-message {
+    flex-direction: row-reverse;
+}
+
+.user-message .chat-avatar {
+    background-color: #4caf50;
+    color: white;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.typing-indicator {
+    display: none;
+    padding: 10px;
+}
+
+.typing-indicator .dot {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: #999;
+    margin: 0 2px;
+    animation: typing 1.4s infinite ease-in-out;
+}
+
+.typing-indicator .dot:nth-child(1) { animation-delay: -0.32s; }
+.typing-indicator .dot:nth-child(2) { animation-delay: -0.16s; }
+
+@keyframes typing {
+    0%, 80%, 100% { transform: scale(0); }
+    40% { transform: scale(1); }
+}
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const chatForm = document.getElementById('chat-form');
+    const messageInput = document.getElementById('message-input');
+    const chatMessages = document.getElementById('chat-messages');
+    const quickQuestions = document.querySelectorAll('.quick-question');
+    
+    // Handle form submission
+    chatForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        const message = messageInput.value.trim();
+        if (message) {
+            addMessage(message, 'user');
+            messageInput.value = '';
+            sendMessage(message);
+        }
+    });
+    
+    // Handle quick questions
+    quickQuestions.forEach(button => {
+        button.addEventListener('click', function() {
+            const question = this.dataset.question;
+            addMessage(question, 'user');
+            sendMessage(question);
+        });
+    });
+    
+    // Add message to chat
+    function addMessage(message, sender) {
+        const messageDiv = document.createElement('div');
+        messageDiv.className = `chat-message ${sender}-message mb-3`;
+        
+        const icon = sender === 'user' ? 'fas fa-user' : 'fas fa-robot';
+        const color = sender === 'user' ? 'text-success' : 'text-primary';
+        
+        messageDiv.innerHTML = `
+            <div class="d-flex ${sender === 'user' ? 'flex-row-reverse' : ''}">
+                <div class="chat-avatar me-3">
+                    <i class="${icon} fa-2x ${color}"></i>
+                </div>
+                <div class="chat-bubble p-3 rounded">
+                    <p class="mb-0">${message}</p>
+                </div>
+            </div>
+        `;
+        
+        chatMessages.appendChild(messageDiv);
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+    
+    // Show typing indicator
+    function showTyping() {
+        const typingDiv = document.createElement('div');
+        typingDiv.className = 'chat-message bot-message mb-3 typing-indicator';
+        typingDiv.innerHTML = `
+            <div class="d-flex">
+                <div class="chat-avatar me-3">
+                    <i class="fas fa-robot fa-2x text-primary"></i>
+                </div>
+                <div class="chat-bubble bg-light p-3 rounded">
+                    <div class="dot"></div>
+                    <div class="dot"></div>
+                    <div class="dot"></div>
+                </div>
+            </div>
+        `;
+        
+        chatMessages.appendChild(typingDiv);
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+        return typingDiv;
+    }
+    
+    // Send message to backend
+    function sendMessage(message) {
+        const typingIndicator = showTyping();
+        
+        fetch('/api/chat', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ message: message })
+        })
+        .then(response => response.json())
+        .then(data => {
+            // Remove typing indicator
+            typingIndicator.remove();
+            
+            // Add bot response
+            setTimeout(() => {
+                addMessage(data.response, 'bot');
+            }, 500);
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            typingIndicator.remove();
+            addMessage('Sorry, I encountered an error. Please try again.', 'bot');
+        });
+    }
+    
+    // Auto-focus on input
+    messageInput.focus();
+});
+</script>
+{% endblock %}

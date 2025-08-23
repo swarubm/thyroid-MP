@@ -1,0 +1,261 @@
+{% extends "base.html" %}
+
+{% block title %}Hormone Catalog - Thyroid Health Assistant{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="card border-0 shadow-sm mb-4">
+            <div class="card-header bg-white">
+                <h3 class="mb-0">
+                    <i class="fas fa-flask me-2"></i>Thyroid Hormone Catalog
+                </h3>
+                <p class="text-muted mb-0">Comprehensive guide to thyroid hormones, their functions, normal ranges, and clinical significance</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    {% for hormone, info in hormones.items() %}
+    <div class="col-lg-6 mb-4">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-header bg-white">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h4 class="mb-0 text-primary">{{ hormone }}</h4>
+                    <span class="badge bg-primary">{{ info.name.split()[0] }}</span>
+                </div>
+            </div>
+            <div class="card-body">
+                <h5 class="card-title">{{ info.name }}</h5>
+                <p class="card-text text-muted">{{ info.description }}</p>
+                
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <div class="info-box bg-light p-3 rounded">
+                            <h6 class="text-success mb-2">
+                                <i class="fas fa-check-circle me-2"></i>Normal Range
+                            </h6>
+                            <p class="mb-0 fw-bold">{{ info.normal_range }}</p>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="info-box bg-light p-3 rounded">
+                            <h6 class="text-primary mb-2">
+                                <i class="fas fa-info-circle me-2"></i>Unit
+                            </h6>
+                            <p class="mb-0 fw-bold">
+                                {% if hormone == 'TSH' %}
+                                    mIU/L
+                                {% elif hormone == 'T3' %}
+                                    ng/dL
+                                {% elif hormone == 'T4' %}
+                                    μg/dL
+                                {% elif hormone == 'FT4' %}
+                                    ng/dL
+                                {% endif %}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <div class="alert alert-warning">
+                            <h6 class="alert-heading">
+                                <i class="fas fa-arrow-up me-2"></i>High Levels
+                            </h6>
+                            <p class="mb-0 small">{{ info.high_meaning }}</p>
+                        </div>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <div class="alert alert-danger">
+                            <h6 class="alert-heading">
+                                <i class="fas fa-arrow-down me-2"></i>Low Levels
+                            </h6>
+                            <p class="mb-0 small">{{ info.low_meaning }}</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Additional Information -->
+                <div class="mt-3">
+                    <h6>Clinical Significance:</h6>
+                    <ul class="small">
+                        {% if hormone == 'TSH' %}
+                            <li>Primary screening test for thyroid function</li>
+                            <li>Most sensitive indicator of thyroid status</li>
+                            <li>Increases when thyroid hormone levels are low</li>
+                            <li>Decreases when thyroid hormone levels are high</li>
+                        {% elif hormone == 'T3' %}
+                            <li>Most biologically active thyroid hormone</li>
+                            <li>Affects metabolism, heart rate, and body temperature</li>
+                            <li>Converted from T4 in peripheral tissues</li>
+                            <li>Short half-life (1-2 days)</li>
+                        {% elif hormone == 'T4' %}
+                            <li>Main thyroid hormone produced by the thyroid gland</li>
+                            <li>Precursor to T3 (active hormone)</li>
+                            <li>Longer half-life (6-7 days)</li>
+                            <li>Bound to proteins in the bloodstream</li>
+                        {% elif hormone == 'FT4' %}
+                            <li>Unbound, biologically active form of T4</li>
+                            <li>More accurate indicator than total T4</li>
+                            <li>Not affected by protein binding</li>
+                            <li>Direct measure of thyroid function</li>
+                        {% endif %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<!-- Additional Hormones Section -->
+<div class="row">
+    <div class="col-12">
+        <div class="card border-0 shadow-sm mb-4">
+            <div class="card-header bg-white">
+                <h4 class="mb-0">
+                    <i class="fas fa-plus-circle me-2"></i>Other Important Thyroid Tests
+                </h4>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6 mb-4">
+                        <div class="card border h-100">
+                            <div class="card-body">
+                                <h5 class="card-title text-primary">Thyroid Antibodies</h5>
+                                <p class="card-text">Tests for autoimmune thyroid conditions like Hashimoto's disease and Graves' disease.</p>
+                                <ul class="small">
+                                    <li><strong>TPO Antibodies:</strong> Thyroid peroxidase antibodies</li>
+                                    <li><strong>TG Antibodies:</strong> Thyroglobulin antibodies</li>
+                                    <li><strong>TSI:</strong> Thyroid stimulating immunoglobulins</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-6 mb-4">
+                        <div class="card border h-100">
+                            <div class="card-body">
+                                <h5 class="card-title text-primary">Reverse T3 (rT3)</h5>
+                                <p class="card-text">Inactive form of T3 that can indicate stress, illness, or poor conversion of T4 to T3.</p>
+                                <ul class="small">
+                                    <li><strong>Normal Range:</strong> 10-24 ng/dL</li>
+                                    <li><strong>High Levels:</strong> May indicate stress or illness</li>
+                                    <li><strong>Clinical Use:</strong> Assess T4 to T3 conversion</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-6 mb-4">
+                        <div class="card border h-100">
+                            <div class="card-body">
+                                <h5 class="card-title text-primary">Thyroglobulin</h5>
+                                <p class="card-text">Protein produced by the thyroid gland, used as a tumor marker after thyroid cancer treatment.</p>
+                                <ul class="small">
+                                    <li><strong>Normal Range:</strong> 1.5-30 ng/mL</li>
+                                    <li><strong>High Levels:</strong> May indicate thyroid cancer recurrence</li>
+                                    <li><strong>Clinical Use:</strong> Cancer monitoring</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-6 mb-4">
+                        <div class="card border h-100">
+                            <div class="card-body">
+                                <h5 class="card-title text-primary">Calcitonin</h5>
+                                <p class="card-text">Hormone produced by C-cells in the thyroid, used to detect medullary thyroid cancer.</p>
+                                <ul class="small">
+                                    <li><strong>Normal Range:</strong> < 10 pg/mL</li>
+                                    <li><strong>High Levels:</strong> May indicate medullary thyroid cancer</li>
+                                    <li><strong>Clinical Use:</strong> Cancer screening</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Testing Guidelines -->
+<div class="row">
+    <div class="col-12">
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-white">
+                <h4 class="mb-0">
+                    <i class="fas fa-clipboard-list me-2"></i>Testing Guidelines & Recommendations
+                </h4>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h5>When to Test:</h5>
+                        <ul>
+                            <li>Unexplained fatigue or weight changes</li>
+                            <li>Family history of thyroid disease</li>
+                            <li>Pregnancy or planning pregnancy</li>
+                            <li>Age 60+ (routine screening)</li>
+                            <li>Autoimmune conditions</li>
+                            <li>Previous thyroid treatment</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="col-md-6">
+                        <h5>Testing Frequency:</h5>
+                        <ul>
+                            <li><strong>Normal function:</strong> Every 2-3 years</li>
+                            <li><strong>Subclinical:</strong> Every 6-12 months</li>
+                            <li><strong>On medication:</strong> Every 6-12 months</li>
+                            <li><strong>Pregnancy:</strong> Each trimester</li>
+                            <li><strong>Post-treatment:</strong> Every 3-6 months</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="mt-4">
+                    <div class="alert alert-info">
+                        <h6 class="alert-heading">
+                            <i class="fas fa-lightbulb me-2"></i>Important Notes
+                        </h6>
+                        <ul class="mb-0">
+                            <li>Test in the morning for most accurate results</li>
+                            <li>Fasting is not required for most thyroid tests</li>
+                            <li>Some medications can affect thyroid test results</li>
+                            <li>Pregnancy can alter normal ranges</li>
+                            <li>Always consult with your healthcare provider for interpretation</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Quick Actions -->
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="card border-0 shadow-sm">
+            <div class="card-body text-center">
+                <h5 class="mb-3">Ready to analyze your hormone levels?</h5>
+                <div class="d-flex justify-content-center gap-3">
+                    <a href="{{ url_for('predict') }}" class="btn btn-primary btn-lg">
+                        <i class="fas fa-chart-line me-2"></i>Make Prediction
+                    </a>
+                    <a href="{{ url_for('chatbot') }}" class="btn btn-outline-primary btn-lg">
+                        <i class="fas fa-robot me-2"></i>Ask AI Assistant
+                    </a>
+                    <a href="{{ url_for('find_hospitals') }}" class="btn btn-outline-success btn-lg">
+                        <i class="fas fa-map-marker-alt me-2"></i>Find Labs
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
