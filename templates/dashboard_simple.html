@@ -1,0 +1,133 @@
+{% extends "base_simple.html" %}
+
+{% block title %}Dashboard - Thyroid Health Assistant{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <h2 class="mb-4">
+            <i class="fas fa-tachometer-alt me-2"></i>Welcome, {{ user.username }}!
+        </h2>
+    </div>
+</div>
+
+<!-- Quick Actions -->
+<div class="row mb-4">
+    <div class="col-md-3 mb-3">
+        <div class="card text-center h-100">
+            <div class="card-body">
+                <i class="fas fa-stethoscope fa-2x text-primary mb-2"></i>
+                <h5>New Prediction</h5>
+                <a href="{{ url_for('predict') }}" class="btn btn-primary btn-sm">Start</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 mb-3">
+        <div class="card text-center h-100">
+            <div class="card-body">
+                <i class="fas fa-upload fa-2x text-success mb-2"></i>
+                <h5>Upload Records</h5>
+                <a href="{{ url_for('upload_health_record') }}" class="btn btn-success btn-sm">Upload</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 mb-3">
+        <div class="card text-center h-100">
+            <div class="card-body">
+                <i class="fas fa-hospital fa-2x text-info mb-2"></i>
+                <h5>Find Hospitals</h5>
+                <a href="{{ url_for('find_hospitals') }}" class="btn btn-info btn-sm">Search</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 mb-3">
+        <div class="card text-center h-100">
+            <div class="card-body">
+                <i class="fas fa-robot fa-2x text-warning mb-2"></i>
+                <h5>AI Assistant</h5>
+                <a href="{{ url_for('chatbot') }}" class="btn btn-warning btn-sm">Chat</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Recent Predictions -->
+<div class="row mb-4">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5><i class="fas fa-chart-line me-2"></i>Recent Predictions</h5>
+            </div>
+            <div class="card-body">
+                {% if predictions %}
+                    {% for prediction in predictions %}
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <div>
+                                <strong>{{ prediction.prediction }}</strong>
+                                <br>
+                                <small class="text-muted">{{ prediction.created_at[:10] }}</small>
+                            </div>
+                            <span class="badge bg-{{ 'success' if prediction.prediction == 'negative' else 'warning' }}">
+                                {{ "%.1f"|format(prediction.confidence * 100) }}%
+                            </span>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <p class="text-muted">No predictions yet. <a href="{{ url_for('predict') }}">Start your first prediction!</a></p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    
+    <!-- Recent Health Records -->
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5><i class="fas fa-file-medical me-2"></i>Recent Health Records</h5>
+            </div>
+            <div class="card-body">
+                {% if health_records %}
+                    {% for record in health_records %}
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <div>
+                                <strong>{{ record.title }}</strong>
+                                <br>
+                                <small class="text-muted">{{ record.record_type }} • {{ record.created_at[:10] }}</small>
+                            </div>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <p class="text-muted">No health records yet. <a href="{{ url_for('upload_health_record') }}">Upload your first record!</a></p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Profile Summary -->
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5><i class="fas fa-user me-2"></i>Profile Summary</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-3">
+                        <strong>Age:</strong> {{ user.age }}
+                    </div>
+                    <div class="col-md-3">
+                        <strong>Sex:</strong> {{ user.sex }}
+                    </div>
+                    <div class="col-md-3">
+                        <strong>Location:</strong> {{ user.location }}
+                    </div>
+                    <div class="col-md-3">
+                        <strong>Member since:</strong> {{ user.created_at[:10] if user.created_at else 'N/A' }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

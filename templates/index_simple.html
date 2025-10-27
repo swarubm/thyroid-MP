@@ -1,0 +1,122 @@
+{% extends "base_simple.html" %}
+
+{% block title %}Home - Thyroid Health Assistant{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<div class="hero-section text-center py-5 mb-5">
+    <div class="container">
+        <h1 class="display-4 mb-4">Your AI-Powered Thyroid Health Companion</h1>
+        <p class="lead mb-4">Get instant thyroid predictions, personalized diet recommendations, and find nearby healthcare providers.</p>
+        <div class="d-flex justify-content-center gap-3">
+            {% if session.get('user') %}
+                <a href="{{ url_for('predict') }}" class="btn btn-primary btn-lg">
+                    <i class="fas fa-stethoscope me-2"></i>Start Prediction
+                </a>
+            {% else %}
+                <a href="{{ url_for('login') }}" class="btn btn-primary btn-lg">
+                    <i class="fas fa-sign-in-alt me-2"></i>Get Started
+                </a>
+            {% endif %}
+            <a href="{{ url_for('hormone_catalog') }}" class="btn btn-outline-primary btn-lg">
+                <i class="fas fa-book me-2"></i>Learn More
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- Features Section -->
+<div class="row mb-5">
+    <div class="col-md-4 text-center mb-4">
+        <div class="feature-card p-4 h-100">
+            <i class="fas fa-brain fa-3x text-primary mb-3"></i>
+            <h4>AI Thyroid Prediction</h4>
+            <p>Advanced machine learning algorithms analyze your hormone levels to predict thyroid conditions with high accuracy.</p>
+        </div>
+    </div>
+    <div class="col-md-4 text-center mb-4">
+        <div class="feature-card p-4 h-100">
+            <i class="fas fa-utensils fa-3x text-success mb-3"></i>
+            <h4>Personalized Diet Plans</h4>
+            <p>Get customized nutrition recommendations based on your thyroid condition and health status.</p>
+        </div>
+    </div>
+    <div class="col-md-4 text-center mb-4">
+        <div class="feature-card p-4 h-100">
+            <i class="fas fa-hospital fa-3x text-info mb-3"></i>
+            <h4>Find Healthcare Providers</h4>
+            <p>Locate nearby hospitals and specialists using GPS technology for convenient care access.</p>
+        </div>
+    </div>
+</div>
+
+<!-- How It Works -->
+<div class="row mb-5">
+    <div class="col-12">
+        <h2 class="text-center mb-4">How It Works</h2>
+        <div class="row">
+            <div class="col-md-3 text-center">
+                <div class="step-card">
+                    <div class="step-number">1</div>
+                    <h5>Upload Your Data</h5>
+                    <p>Enter your hormone levels and medical history</p>
+                </div>
+            </div>
+            <div class="col-md-3 text-center">
+                <div class="step-card">
+                    <div class="step-number">2</div>
+                    <h5>AI Analysis</h5>
+                    <p>Our AI analyzes your data for patterns</p>
+                </div>
+            </div>
+            <div class="col-md-3 text-center">
+                <div class="step-card">
+                    <div class="step-number">3</div>
+                    <h5>Get Results</h5>
+                    <p>Receive detailed predictions and insights</p>
+                </div>
+            </div>
+            <div class="col-md-3 text-center">
+                <div class="step-card">
+                    <div class="step-number">4</div>
+                    <h5>Take Action</h5>
+                    <p>Get recommendations and find care</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Stats Section -->
+<div class="row mb-5">
+    <div class="col-12">
+        <div class="stats-section text-center py-4">
+            <div class="row">
+                <div class="col-md-4">
+                    <h3 class="text-primary">95%</h3>
+                    <p>Prediction Accuracy</p>
+                </div>
+                <div class="col-md-4">
+                    <h3 class="text-success">10,000+</h3>
+                    <p>Users Served</p>
+                </div>
+                <div class="col-md-4">
+                    <h3 class="text-info">24/7</h3>
+                    <p>AI Assistant Available</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- CTA Section -->
+<div class="text-center py-5">
+    <h3>Ready to take control of your thyroid health?</h3>
+    <p class="lead mb-4">Join thousands of users who trust our AI-powered platform</p>
+    {% if session.get('user') %}
+        <a href="{{ url_for('predict') }}" class="btn btn-primary btn-lg">Start Your Prediction</a>
+    {% else %}
+        <a href="{{ url_for('login') }}" class="btn btn-primary btn-lg">Get Started Today</a>
+    {% endif %}
+</div>
+{% endblock %}

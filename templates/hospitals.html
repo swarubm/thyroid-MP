@@ -1,0 +1,308 @@
+{% extends "base.html" %}
+
+{% block title %}Hospital Results - Thyroid Health Assistant{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="card border-0 shadow-sm mb-4">
+            <div class="card-header bg-white">
+                <h4 class="mb-0">
+                    <i class="fas fa-hospital me-2"></i>Hospitals Near {{ location }}
+                </h4>
+                <p class="text-muted mb-0">Found {{ hospitals|length }} healthcare facilities in your area</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-lg-8">
+        {% if hospitals %}
+            {% for hospital in hospitals %}
+            <div class="card border-0 shadow-sm mb-3">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-8">
+                            <h5 class="card-title text-primary mb-2">{{ hospital.name }}</h5>
+                            <p class="text-muted mb-2">{{ hospital.address }}</p>
+                            <div class="d-flex align-items-center mb-2">
+                                <i class="fas fa-map-marker-alt text-success me-2"></i>
+                                <span class="text-success fw-bold">{{ "%.1f"|format(hospital.distance) }} km away</span>
+                            </div>
+                            
+                            <!-- Hospital Type Indicators -->
+                            <div class="mb-3">
+                                {% if 'hospital' in hospital.name.lower() %}
+                                    <span class="badge bg-primary me-1">Hospital</span>
+                                {% endif %}
+                                {% if 'medical' in hospital.name.lower() %}
+                                    <span class="badge bg-info me-1">Medical Center</span>
+                                {% endif %}
+                                {% if 'clinic' in hospital.name.lower() %}
+                                    <span class="badge bg-success me-1">Clinic</span>
+                                {% endif %}
+                                {% if 'university' in hospital.name.lower() or 'college' in hospital.name.lower() %}
+                                    <span class="badge bg-warning me-1">Teaching Hospital</span>
+                                {% endif %}
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-4 text-md-end">
+                            <div class="d-grid gap-2">
+                                <a href="https://www.google.com/maps/dir/?api=1&destination={{ hospital.address|urlencode }}" 
+                                   target="_blank" class="btn btn-outline-primary btn-sm">
+                                    <i class="fas fa-directions me-1"></i>Get Directions
+                                </a>
+                                <button class="btn btn-outline-secondary btn-sm" onclick="showHospitalInfo('{{ hospital.name }}')">
+                                    <i class="fas fa-info-circle me-1"></i>More Info
+                                </button>
+                                <button class="btn btn-outline-success btn-sm" onclick="saveHospital('{{ hospital.name }}', '{{ hospital.address }}')">
+                                    <i class="fas fa-bookmark me-1"></i>Save
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <div class="card border-0 shadow-sm">
+                <div class="card-body text-center py-5">
+                    <i class="fas fa-search fa-3x text-muted mb-3"></i>
+                    <h5>No hospitals found</h5>
+                    <p class="text-muted">Try searching with a different location or broader area.</p>
+                    <a href="{{ url_for('find_hospitals') }}" class="btn btn-primary">
+                        <i class="fas fa-search me-2"></i>Search Again
+                    </a>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+    
+    <!-- Sidebar -->
+    <div class="col-lg-4">
+        <!-- Search Again -->
+        <div class="card border-0 shadow-sm mb-4">
+            <div class="card-header bg-white">
+                <h5 class="mb-0">
+                    <i class="fas fa-search me-2"></i>Search Again
+                </h5>
+            </div>
+            <div class="card-body">
+                <form method="POST" action="{{ url_for('find_hospitals') }}">
+                    <div class="mb-3">
+                        <label for="new-location" class="form-label">New Location</label>
+                        <input type="text" class="form-control" id="new-location" name="location" 
+                               placeholder="Enter new location">
+                    </div>
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-search me-2"></i>Search
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        
+        <!-- Filter Options -->
+        <div class="card border-0 shadow-sm mb-4">
+            <div class="card-header bg-white">
+                <h5 class="mb-0">
+                    <i class="fas fa-filter me-2"></i>Filter Results
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="mb-3">
+                    <label class="form-label">Distance</label>
+                    <select class="form-select" id="distance-filter">
+                        <option value="5">Within 5 km</option>
+                        <option value="10">Within 10 km</option>
+                        <option value="20">Within 20 km</option>
+                        <option value="50">Within 50 km</option>
+                    </select>
+                </div>
+                
+                <div class="mb-3">
+                    <label class="form-label">Facility Type</label>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="filter-hospital" checked>
+                        <label class="form-check-label" for="filter-hospital">Hospitals</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="filter-clinic" checked>
+                        <label class="form-check-label" for="filter-clinic">Clinics</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="filter-medical" checked>
+                        <label class="form-check-label" for="filter-medical">Medical Centers</label>
+                    </div>
+                </div>
+                
+                <button class="btn btn-outline-primary btn-sm w-100" onclick="applyFilters()">
+                    <i class="fas fa-filter me-2"></i>Apply Filters
+                </button>
+            </div>
+        </div>
+        
+        <!-- Saved Hospitals -->
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-white">
+                <h5 class="mb-0">
+                    <i class="fas fa-bookmark me-2"></i>Saved Hospitals
+                </h5>
+            </div>
+            <div class="card-body">
+                <div id="saved-hospitals">
+                    <p class="text-muted small">No saved hospitals yet. Click "Save" on any hospital to add it here.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Hospital Info Modal -->
+<div class="modal fade" id="hospitalModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="hospitalModalTitle">Hospital Information</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body" id="hospitalModalBody">
+                <!-- Content will be loaded here -->
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" id="modalDirections">Get Directions</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Load saved hospitals from localStorage
+function loadSavedHospitals() {
+    const saved = JSON.parse(localStorage.getItem('savedHospitals') || '[]');
+    const container = document.getElementById('saved-hospitals');
+    
+    if (saved.length === 0) {
+        container.innerHTML = '<p class="text-muted small">No saved hospitals yet. Click "Save" on any hospital to add it here.</p>';
+        return;
+    }
+    
+    let html = '';
+    saved.forEach(hospital => {
+        html += `
+            <div class="saved-hospital mb-2 p-2 border rounded">
+                <h6 class="mb-1">${hospital.name}</h6>
+                <p class="small text-muted mb-1">${hospital.address}</p>
+                <div class="d-flex gap-1">
+                    <button class="btn btn-outline-primary btn-sm" onclick="getDirections('${hospital.address}')">
+                        <i class="fas fa-directions"></i>
+                    </button>
+                    <button class="btn btn-outline-danger btn-sm" onclick="removeSavedHospital('${hospital.name}')">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </div>
+            </div>
+        `;
+    });
+    container.innerHTML = html;
+}
+
+// Save hospital to localStorage
+function saveHospital(name, address) {
+    const saved = JSON.parse(localStorage.getItem('savedHospitals') || '[]');
+    const hospital = { name, address };
+    
+    if (!saved.find(h => h.name === name)) {
+        saved.push(hospital);
+        localStorage.setItem('savedHospitals', JSON.stringify(saved));
+        loadSavedHospitals();
+        
+        // Show success message
+        const toast = document.createElement('div');
+        toast.className = 'alert alert-success alert-dismissible fade show position-fixed';
+        toast.style.cssText = 'top: 20px; right: 20px; z-index: 9999;';
+        toast.innerHTML = `
+            <i class="fas fa-check-circle me-2"></i>Hospital saved successfully!
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        `;
+        document.body.appendChild(toast);
+        
+        setTimeout(() => {
+            toast.remove();
+        }, 3000);
+    }
+}
+
+// Remove saved hospital
+function removeSavedHospital(name) {
+    const saved = JSON.parse(localStorage.getItem('savedHospitals') || '[]');
+    const filtered = saved.filter(h => h.name !== name);
+    localStorage.setItem('savedHospitals', JSON.stringify(filtered));
+    loadSavedHospitals();
+}
+
+// Show hospital information modal
+function showHospitalInfo(name) {
+    const modal = new bootstrap.Modal(document.getElementById('hospitalModal'));
+    document.getElementById('hospitalModalTitle').textContent = name;
+    
+    // Simulate loading hospital information
+    document.getElementById('hospitalModalBody').innerHTML = `
+        <div class="text-center">
+            <i class="fas fa-spinner fa-spin fa-2x mb-3"></i>
+            <p>Loading hospital information...</p>
+        </div>
+    `;
+    
+    modal.show();
+    
+    // Simulate API call delay
+    setTimeout(() => {
+        document.getElementById('hospitalModalBody').innerHTML = `
+            <div class="row">
+                <div class="col-12">
+                    <h6>Services Offered:</h6>
+                    <ul>
+                        <li>Endocrinology consultations</li>
+                        <li>Thyroid function tests</li>
+                        <li>Thyroid ultrasound</li>
+                        <li>Fine needle aspiration</li>
+                        <li>Thyroid surgery</li>
+                    </ul>
+                    
+                    <h6>Contact Information:</h6>
+                    <p><i class="fas fa-phone me-2"></i>Please call the hospital directly for phone number</p>
+                    <p><i class="fas fa-globe me-2"></i>Visit their website for more information</p>
+                    
+                    <h6>Hours:</h6>
+                    <p>Monday - Friday: 8:00 AM - 5:00 PM<br>
+                    Emergency services available 24/7</p>
+                </div>
+            </div>
+        `;
+    }, 1000);
+}
+
+// Get directions
+function getDirections(address) {
+    const url = `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(address)}`;
+    window.open(url, '_blank');
+}
+
+// Apply filters (placeholder function)
+function applyFilters() {
+    alert('Filter functionality will be implemented in future updates.');
+}
+
+// Initialize page
+document.addEventListener('DOMContentLoaded', function() {
+    loadSavedHospitals();
+});
+</script>
+{% endblock %}

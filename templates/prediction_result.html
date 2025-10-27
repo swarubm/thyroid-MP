@@ -1,0 +1,309 @@
+{% extends "base.html" %}
+
+{% block title %}Prediction Result - Thyroid Health Assistant{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-8">
+        <!-- Prediction Result Card -->
+        <div class="card border-0 shadow-sm mb-4">
+            <div class="card-header bg-white">
+                <h4 class="mb-0">
+                    <i class="fas fa-chart-line me-2"></i>Prediction Result
+                </h4>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="text-center mb-4">
+                            <div class="prediction-icon mb-3">
+                                {% if prediction == 'negative' %}
+                                    <i class="fas fa-check-circle fa-4x text-success"></i>
+                                {% else %}
+                                    <i class="fas fa-exclamation-triangle fa-4x text-warning"></i>
+                                {% endif %}
+                            </div>
+                            <h3 class="mb-2">
+                                {% if prediction == 'negative' %}
+                                    Normal Thyroid Function
+                                {% elif prediction == 'primary_hypothyroid' %}
+                                    Primary Hypothyroidism
+                                {% elif prediction == 'compensated_hypothyroid' %}
+                                    Compensated Hypothyroidism
+                                {% elif prediction == 'secondary_hypothyroid' %}
+                                    Secondary Hypothyroidism
+                                {% else %}
+                                    {{ prediction.replace('_', ' ').title() }}
+                                {% endif %}
+                            </h3>
+                            <p class="text-muted">Confidence: {{ "%.1f"|format(confidence * 100) }}%</p>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-6">
+                        <h5>Your Hormone Levels</h5>
+                        <div class="table-responsive">
+                            <table class="table table-sm">
+                                <tbody>
+                                    <tr>
+                                        <td><strong>TSH:</strong></td>
+                                        <td>{{ data.TSH }} mIU/L</td>
+                                        <td>
+                                            {% if data.TSH < 0.4 %}
+                                                <span class="badge bg-danger">Low</span>
+                                            {% elif data.TSH > 4.0 %}
+                                                <span class="badge bg-warning">High</span>
+                                            {% else %}
+                                                <span class="badge bg-success">Normal</span>
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>T3:</strong></td>
+                                        <td>{{ data.T3 }} ng/dL</td>
+                                        <td>
+                                            {% if data.T3 < 80 %}
+                                                <span class="badge bg-danger">Low</span>
+                                            {% elif data.T3 > 200 %}
+                                                <span class="badge bg-warning">High</span>
+                                            {% else %}
+                                                <span class="badge bg-success">Normal</span>
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>TT4:</strong></td>
+                                        <td>{{ data.TT4 }} μg/dL</td>
+                                        <td>
+                                            {% if data.TT4 < 4.5 %}
+                                                <span class="badge bg-danger">Low</span>
+                                            {% elif data.TT4 > 11.2 %}
+                                                <span class="badge bg-warning">High</span>
+                                            {% else %}
+                                                <span class="badge bg-success">Normal</span>
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>T4U:</strong></td>
+                                        <td>{{ data.T4U }}</td>
+                                        <td>
+                                            {% if data.T4U < 0.8 %}
+                                                <span class="badge bg-danger">Low</span>
+                                            {% elif data.T4U > 1.3 %}
+                                                <span class="badge bg-warning">High</span>
+                                            {% else %}
+                                                <span class="badge bg-success">Normal</span>
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Detailed Analysis -->
+        <div class="card border-0 shadow-sm mb-4">
+            <div class="card-header bg-white">
+                <h5 class="mb-0">
+                    <i class="fas fa-microscope me-2"></i>Detailed Analysis
+                </h5>
+            </div>
+            <div class="card-body">
+                {% if prediction == 'negative' %}
+                    <div class="alert alert-success">
+                        <h6><i class="fas fa-check-circle me-2"></i>Good News!</h6>
+                        <p class="mb-0">Your thyroid hormone levels appear to be within normal ranges. However, it's always recommended to consult with a healthcare provider for a complete evaluation.</p>
+                    </div>
+                {% elif 'hypothyroid' in prediction %}
+                    <div class="alert alert-warning">
+                        <h6><i class="fas fa-exclamation-triangle me-2"></i>Hypothyroidism Detected</h6>
+                        <p class="mb-0">Your thyroid hormone levels suggest hypothyroidism. This means your thyroid gland is not producing enough thyroid hormones. Please consult with an endocrinologist for proper diagnosis and treatment.</p>
+                    </div>
+                    
+                    <h6>Common Symptoms of Hypothyroidism:</h6>
+                    <ul>
+                        <li>Fatigue and weakness</li>
+                        <li>Weight gain</li>
+                        <li>Cold intolerance</li>
+                        <li>Dry skin and hair</li>
+                        <li>Constipation</li>
+                        <li>Depression</li>
+                        <li>Memory problems</li>
+                    </ul>
+                {% elif 'hyperthyroid' in prediction %}
+                    <div class="alert alert-warning">
+                        <h6><i class="fas fa-exclamation-triangle me-2"></i>Hyperthyroidism Detected</h6>
+                        <p class="mb-0">Your thyroid hormone levels suggest hyperthyroidism. This means your thyroid gland is producing too much thyroid hormone. Please consult with an endocrinologist for proper diagnosis and treatment.</p>
+                    </div>
+                    
+                    <h6>Common Symptoms of Hyperthyroidism:</h6>
+                    <ul>
+                        <li>Weight loss</li>
+                        <li>Rapid heartbeat</li>
+                        <li>Nervousness and anxiety</li>
+                        <li>Heat intolerance</li>
+                        <li>Increased sweating</li>
+                        <li>Insomnia</li>
+                        <li>Muscle weakness</li>
+                    </ul>
+                {% endif %}
+                
+                <div class="mt-4">
+                    <h6>Important Notes:</h6>
+                    <ul>
+                        <li>This prediction is based on AI analysis and should not replace professional medical advice</li>
+                        <li>Thyroid conditions can have various causes and require proper medical evaluation</li>
+                        <li>Treatment options vary based on the underlying cause and severity</li>
+                        <li>Regular monitoring of thyroid function is important for ongoing management</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Next Steps -->
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-white">
+                <h5 class="mb-0">
+                    <i class="fas fa-arrow-right me-2"></i>Recommended Next Steps
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <div class="card border h-100">
+                            <div class="card-body text-center">
+                                <i class="fas fa-user-md fa-2x text-primary mb-3"></i>
+                                <h6>Consult Healthcare Provider</h6>
+                                <p class="small text-muted">Schedule an appointment with your doctor or endocrinologist for proper evaluation</p>
+                                <a href="{{ url_for('find_hospitals') }}" class="btn btn-outline-primary btn-sm">Find Hospitals</a>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-6 mb-3">
+                        <div class="card border h-100">
+                            <div class="card-body text-center">
+                                <i class="fas fa-apple-alt fa-2x text-warning mb-3"></i>
+                                <h6>Get Diet Recommendations</h6>
+                                <p class="small text-muted">Access personalized diet and lifestyle recommendations based on your condition</p>
+                                <a href="{{ url_for('diet_recommendations') }}" class="btn btn-outline-warning btn-sm">View Diet Guide</a>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-6 mb-3">
+                        <div class="card border h-100">
+                            <div class="card-body text-center">
+                                <i class="fas fa-robot fa-2x text-success mb-3"></i>
+                                <h6>Chat with AI Assistant</h6>
+                                <p class="small text-muted">Get answers to your questions about thyroid health and management</p>
+                                <a href="{{ url_for('chatbot') }}" class="btn btn-outline-success btn-sm">Start Chat</a>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-6 mb-3">
+                        <div class="card border h-100">
+                            <div class="card-body text-center">
+                                <i class="fas fa-chart-line fa-2x text-info mb-3"></i>
+                                <h6>Track Progress</h6>
+                                <p class="small text-muted">Monitor your thyroid health over time with regular predictions</p>
+                                <a href="{{ url_for('predict') }}" class="btn btn-outline-info btn-sm">New Prediction</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Sidebar -->
+    <div class="col-lg-4">
+        <!-- Medical History Summary -->
+        <div class="card border-0 shadow-sm mb-4">
+            <div class="card-header bg-white">
+                <h6 class="mb-0">
+                    <i class="fas fa-history me-2"></i>Medical History Summary
+                </h6>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-6">
+                        <p class="small text-muted mb-1">Age</p>
+                        <h6>{{ data.age }}</h6>
+                    </div>
+                    <div class="col-6">
+                        <p class="small text-muted mb-1">Sex</p>
+                        <h6>{{ 'Male' if data.sex == 'M' else 'Female' }}</h6>
+                    </div>
+                </div>
+                
+                <hr>
+                
+                <h6 class="mb-2">Conditions & Medications:</h6>
+                <div class="small">
+                    {% if data.on_thyroxine %}
+                        <span class="badge bg-primary me-1 mb-1">On Thyroxine</span>
+                    {% endif %}
+                    {% if data.on_antithyroid_medication %}
+                        <span class="badge bg-warning me-1 mb-1">Antithyroid Meds</span>
+                    {% endif %}
+                    {% if data.pregnant %}
+                        <span class="badge bg-success me-1 mb-1">Pregnant</span>
+                    {% endif %}
+                    {% if data.thyroid_surgery %}
+                        <span class="badge bg-secondary me-1 mb-1">Thyroid Surgery</span>
+                    {% endif %}
+                    {% if data.i131_treatment %}
+                        <span class="badge bg-info me-1 mb-1">I131 Treatment</span>
+                    {% endif %}
+                    {% if data.lithium %}
+                        <span class="badge bg-dark me-1 mb-1">Lithium</span>
+                    {% endif %}
+                    {% if data.goitre %}
+                        <span class="badge bg-danger me-1 mb-1">Goitre</span>
+                    {% endif %}
+                    {% if data.tumor %}
+                        <span class="badge bg-danger me-1 mb-1">Tumor</span>
+                    {% endif %}
+                    {% if data.hypopituitary %}
+                        <span class="badge bg-secondary me-1 mb-1">Hypopituitary</span>
+                    {% endif %}
+                    {% if data.psych %}
+                        <span class="badge bg-secondary me-1 mb-1">Psychiatric</span>
+                    {% endif %}
+                    {% if data.sick %}
+                        <span class="badge bg-warning me-1 mb-1">Currently Sick</span>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        
+        <!-- Quick Actions -->
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-white">
+                <h6 class="mb-0">
+                    <i class="fas fa-bolt me-2"></i>Quick Actions
+                </h6>
+            </div>
+            <div class="card-body">
+                <div class="d-grid gap-2">
+                    <a href="{{ url_for('dashboard') }}" class="btn btn-outline-primary btn-sm">
+                        <i class="fas fa-home me-2"></i>Back to Dashboard
+                    </a>
+                    <a href="{{ url_for('upload_health_record') }}" class="btn btn-outline-success btn-sm">
+                        <i class="fas fa-upload me-2"></i>Upload Lab Results
+                    </a>
+                    <a href="{{ url_for('profile') }}" class="btn btn-outline-secondary btn-sm">
+                        <i class="fas fa-user me-2"></i>Update Profile
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,104 @@
+{% extends "base_simple.html" %}
+
+{% block title %}Admin Dashboard - Thyroid Health Assistant{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <h2 class="mb-4">
+            <i class="fas fa-cogs me-2"></i>Admin Dashboard
+        </h2>
+    </div>
+</div>
+
+<!-- Statistics Cards -->
+<div class="row mb-4">
+    <div class="col-md-4 mb-3">
+        <div class="card text-center">
+            <div class="card-body">
+                <i class="fas fa-users fa-2x text-primary mb-2"></i>
+                <h3>{{ total_users }}</h3>
+                <p class="card-text">Total Users</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4 mb-3">
+        <div class="card text-center">
+            <div class="card-body">
+                <i class="fas fa-chart-line fa-2x text-success mb-2"></i>
+                <h3>{{ total_predictions }}</h3>
+                <p class="card-text">Total Predictions</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4 mb-3">
+        <div class="card text-center">
+            <div class="card-body">
+                <i class="fas fa-server fa-2x text-info mb-2"></i>
+                <h3>Online</h3>
+                <p class="card-text">System Status</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Quick Actions -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5><i class="fas fa-tools me-2"></i>Quick Actions</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-3 mb-2">
+                        <button class="btn btn-outline-primary w-100">
+                            <i class="fas fa-download me-2"></i>Export Data
+                        </button>
+                    </div>
+                    <div class="col-md-3 mb-2">
+                        <button class="btn btn-outline-success w-100">
+                            <i class="fas fa-save me-2"></i>Backup System
+                        </button>
+                    </div>
+                    <div class="col-md-3 mb-2">
+                        <button class="btn btn-outline-warning w-100">
+                            <i class="fas fa-sync me-2"></i>Update Model
+                        </button>
+                    </div>
+                    <div class="col-md-3 mb-2">
+                        <button class="btn btn-outline-info w-100">
+                            <i class="fas fa-file-alt me-2"></i>View Logs
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- System Information -->
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5><i class="fas fa-info-circle me-2"></i>System Information</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <p><strong>Platform:</strong> Thyroid Health Assistant</p>
+                        <p><strong>Version:</strong> 1.0.0</p>
+                        <p><strong>Status:</strong> <span class="badge bg-success">Operational</span></p>
+                    </div>
+                    <div class="col-md-6">
+                        <p><strong>Last Backup:</strong> Today</p>
+                        <p><strong>Model Version:</strong> Simple Predictor v1.0</p>
+                        <p><strong>Uptime:</strong> 24/7</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

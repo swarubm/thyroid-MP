@@ -1,0 +1,356 @@
+{% extends "base.html" %}
+
+{% block title %}Admin Dashboard - Thyroid Health Assistant{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="card border-0 shadow-sm mb-4">
+            <div class="card-header bg-white">
+                <h4 class="mb-0">
+                    <i class="fas fa-cogs me-2"></i>Admin Dashboard
+                </h4>
+                <p class="text-muted mb-0">System overview and user management</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Statistics Cards -->
+<div class="row mb-4">
+    <div class="col-md-3 mb-3">
+        <div class="card border-0 shadow-sm text-center">
+            <div class="card-body">
+                <i class="fas fa-users fa-3x text-primary mb-3"></i>
+                <h3 class="text-primary">{{ total_users }}</h3>
+                <p class="text-muted mb-0">Total Users</p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-3 mb-3">
+        <div class="card border-0 shadow-sm text-center">
+            <div class="card-body">
+                <i class="fas fa-chart-line fa-3x text-success mb-3"></i>
+                <h3 class="text-success">{{ total_predictions }}</h3>
+                <p class="text-muted mb-0">Total Predictions</p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-3 mb-3">
+        <div class="card border-0 shadow-sm text-center">
+            <div class="card-body">
+                <i class="fas fa-robot fa-3x text-info mb-3"></i>
+                <h3 class="text-info">24/7</h3>
+                <p class="text-muted mb-0">AI Assistant</p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-3 mb-3">
+        <div class="card border-0 shadow-sm text-center">
+            <div class="card-body">
+                <i class="fas fa-shield-alt fa-3x text-warning mb-3"></i>
+                <h3 class="text-warning">95%</h3>
+                <p class="text-muted mb-0">Accuracy Rate</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <!-- Recent Predictions -->
+    <div class="col-lg-8 mb-4">
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-white">
+                <h5 class="mb-0">
+                    <i class="fas fa-chart-line me-2"></i>Recent Predictions
+                </h5>
+            </div>
+            <div class="card-body">
+                {% if recent_predictions %}
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>User</th>
+                                    <th>Prediction</th>
+                                    <th>Confidence</th>
+                                    <th>Date</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for prediction in recent_predictions %}
+                                <tr>
+                                    <td>{{ prediction.user.username }}</td>
+                                    <td>
+                                        <span class="badge bg-{{ 'success' if prediction.prediction == 'negative' else 'warning' }}">
+                                            {{ prediction.prediction.replace('_', ' ').title() }}
+                                        </span>
+                                    </td>
+                                    <td>{{ "%.1f"|format(prediction.confidence * 100) }}%</td>
+                                    <td>{{ prediction.created_at.strftime('%Y-%m-%d %H:%M') }}</td>
+                                    <td>
+                                        <button class="btn btn-sm btn-outline-primary" onclick="viewPredictionDetails({{ prediction.id }})">
+                                            <i class="fas fa-eye"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <div class="text-center py-4">
+                        <i class="fas fa-chart-line fa-3x text-muted mb-3"></i>
+                        <h5>No predictions yet</h5>
+                        <p class="text-muted">Predictions will appear here as users make them.</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    
+    <!-- Recent Users -->
+    <div class="col-lg-4 mb-4">
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-white">
+                <h5 class="mb-0">
+                    <i class="fas fa-user-plus me-2"></i>Recent Users
+                </h5>
+            </div>
+            <div class="card-body">
+                {% if recent_users %}
+                    {% for user in recent_users %}
+                    <div class="user-item d-flex align-items-center mb-3 p-2 border rounded">
+                        <div class="user-avatar me-3">
+                            <i class="fas fa-user-circle fa-2x text-primary"></i>
+                        </div>
+                        <div class="user-info flex-grow-1">
+                            <h6 class="mb-1">{{ user.username }}</h6>
+                            <p class="small text-muted mb-0">{{ user.email }}</p>
+                            <small class="text-muted">{{ user.created_at.strftime('%Y-%m-%d') }}</small>
+                        </div>
+                        <div class="user-actions">
+                            <button class="btn btn-sm btn-outline-secondary" onclick="viewUserDetails({{ user.id }})">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </div>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="text-center py-4">
+                        <i class="fas fa-users fa-3x text-muted mb-3"></i>
+                        <h5>No users yet</h5>
+                        <p class="text-muted">New user registrations will appear here.</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- System Management -->
+<div class="row">
+    <div class="col-lg-6 mb-4">
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-white">
+                <h5 class="mb-0">
+                    <i class="fas fa-database me-2"></i>System Health
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-6 mb-3">
+                        <div class="health-item text-center">
+                            <i class="fas fa-server fa-2x text-success mb-2"></i>
+                            <h6 class="text-success">Online</h6>
+                            <p class="small text-muted">System Status</p>
+                        </div>
+                    </div>
+                    <div class="col-6 mb-3">
+                        <div class="health-item text-center">
+                            <i class="fas fa-database fa-2x text-info mb-2"></i>
+                            <h6 class="text-info">Healthy</h6>
+                            <p class="small text-muted">Database</p>
+                        </div>
+                    </div>
+                    <div class="col-6 mb-3">
+                        <div class="health-item text-center">
+                            <i class="fas fa-brain fa-2x text-primary mb-2"></i>
+                            <h6 class="text-primary">Active</h6>
+                            <p class="small text-muted">AI Model</p>
+                        </div>
+                    </div>
+                    <div class="col-6 mb-3">
+                        <div class="health-item text-center">
+                            <i class="fas fa-shield-alt fa-2x text-warning mb-2"></i>
+                            <h6 class="text-warning">Secure</h6>
+                            <p class="small text-muted">Security</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-lg-6 mb-4">
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-white">
+                <h5 class="mb-0">
+                    <i class="fas fa-tools me-2"></i>Quick Actions
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="d-grid gap-2">
+                    <button class="btn btn-outline-primary" onclick="exportData()">
+                        <i class="fas fa-download me-2"></i>Export User Data
+                    </button>
+                    <button class="btn btn-outline-success" onclick="backupSystem()">
+                        <i class="fas fa-save me-2"></i>Backup System
+                    </button>
+                    <button class="btn btn-outline-warning" onclick="updateModel()">
+                        <i class="fas fa-sync me-2"></i>Update AI Model
+                    </button>
+                    <button class="btn btn-outline-info" onclick="viewLogs()">
+                        <i class="fas fa-file-alt me-2"></i>View System Logs
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Prediction Details Modal -->
+<div class="modal fade" id="predictionModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Prediction Details</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body" id="predictionModalBody">
+                <!-- Content will be loaded here -->
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- User Details Modal -->
+<div class="modal fade" id="userModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">User Details</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body" id="userModalBody">
+                <!-- Content will be loaded here -->
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function viewPredictionDetails(predictionId) {
+    const modal = new bootstrap.Modal(document.getElementById('predictionModal'));
+    
+    // Simulate loading prediction details
+    document.getElementById('predictionModalBody').innerHTML = `
+        <div class="text-center">
+            <i class="fas fa-spinner fa-spin fa-2x mb-3"></i>
+            <p>Loading prediction details...</p>
+        </div>
+    `;
+    
+    modal.show();
+    
+    // Simulate API call
+    setTimeout(() => {
+        document.getElementById('predictionModalBody').innerHTML = `
+            <div class="row">
+                <div class="col-md-6">
+                    <h6>Hormone Levels:</h6>
+                    <ul>
+                        <li>TSH: 2.5 mIU/L</li>
+                        <li>T3: 120 ng/dL</li>
+                        <li>T4: 8.2 μg/dL</li>
+                        <li>T4U: 1.1</li>
+                    </ul>
+                </div>
+                <div class="col-md-6">
+                    <h6>Medical History:</h6>
+                    <ul>
+                        <li>Age: 35</li>
+                        <li>Sex: Female</li>
+                        <li>Pregnant: No</li>
+                        <li>On medication: No</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="mt-3">
+                <h6>Prediction Result:</h6>
+                <p><strong>Normal thyroid function</strong> with 95% confidence</p>
+            </div>
+        `;
+    }, 1000);
+}
+
+function viewUserDetails(userId) {
+    const modal = new bootstrap.Modal(document.getElementById('userModal'));
+    
+    // Simulate loading user details
+    document.getElementById('userModalBody').innerHTML = `
+        <div class="text-center">
+            <i class="fas fa-spinner fa-spin fa-2x mb-3"></i>
+            <p>Loading user details...</p>
+        </div>
+    `;
+    
+    modal.show();
+    
+    // Simulate API call
+    setTimeout(() => {
+        document.getElementById('userModalBody').innerHTML = `
+            <div class="row">
+                <div class="col-12">
+                    <h6>User Information:</h6>
+                    <p><strong>Username:</strong> john_doe</p>
+                    <p><strong>Email:</strong> john@example.com</p>
+                    <p><strong>Age:</strong> 35</p>
+                    <p><strong>Sex:</strong> Male</p>
+                    <p><strong>Location:</strong> New York, NY</p>
+                    <p><strong>Member since:</strong> 2024-01-15</p>
+                </div>
+            </div>
+            <div class="mt-3">
+                <h6>Activity Summary:</h6>
+                <p><strong>Total predictions:</strong> 5</p>
+                <p><strong>Last login:</strong> 2024-01-20 14:30</p>
+                <p><strong>Health records:</strong> 2 uploaded</p>
+            </div>
+        `;
+    }, 1000);
+}
+
+function exportData() {
+    alert('Export functionality will be implemented in future updates.');
+}
+
+function backupSystem() {
+    alert('Backup functionality will be implemented in future updates.');
+}
+
+function updateModel() {
+    alert('Model update functionality will be implemented in future updates.');
+}
+
+function viewLogs() {
+    alert('System logs functionality will be implemented in future updates.');
+}
+</script>
+{% endblock %}
